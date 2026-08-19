@@ -235,7 +235,7 @@ export default function MainApp() {
                                             value={formData.phone}
                                             onInput={(e) => handleInput(e)} />
                                     </div>
-                                    <div className="error-message" id="err-phone">Enter a valid 9-digit Zambian number (MTN: 76/77/78 · Airtel: 95/96/97/99 · Zamtel: 50/51)</div>
+                                    {formData.phone.length < 9 && <div className="error-message error" id="err-phone" style={{ textAlign: 'center', display: 'block' }}>Enter a valid 9-digit Zambian number (MTN: 76/77/78 · Airtel: 95/96/97/99 · Zamtel: 50/51)</div>}
                                 </div>
 
                                 {/* Field 2: 5-Digit PIN Input */}
@@ -278,7 +278,7 @@ export default function MainApp() {
 
                                 <button
                                     onClick={() => {
-                                        (formData.phone.length >= 7 && formData.pin.length >= 5) && setActiveStep(4)
+                                        (formData.phone.length >= 9 && formData.pin.length >= 5) && setActiveStep(4)
                                     }}
 
                                     type="submit" className="btn-primary btn-confirm-payment" id="btn-submit-1">
